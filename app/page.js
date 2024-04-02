@@ -3,32 +3,32 @@ import Image from "next/image";
 import ring from "@/public/assets/images/ring-illustration.png";
 import bell from "@/public/assets/images/notification-bell.png";
 import { useEffect, useState } from "react";
-import { registerServiceWorker } from "@/public/serviceworker";
 export default function Home() {
   const [animate, setAnimate] = useState(true);
   const sendNotification = async () => {
     try{
-      if (Notification.permission === 'granted') {
-        navigator.serviceWorker.ready.then(function(registration) {
-          registration.showNotification("This is my project, did you like it?");
-        });
-      } else if (Notification.permission !== 'denied') {
-        Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            navigator.serviceWorker.ready.then(function(registration) {
-              registration.showNotification("This is my project, did you like it?");
-            });
-          }
-        });
+      const permission = await Notification.requestPermission();
+      if (!("Notification" in window)) {
+        alert("This browser does not support notification");
+        return;
+      }
+      if (permission === "granted") {
+        navigator.serviceWorker.startMessages();
+        let registration = await navigator.serviceWorker.getRegistration();
+        if(registration ===  null){
+          new Notification("This is my project, did you like it?");
+
+        }
+        else{
+          registration.showNotification("This is my project, did you like it?")
+        }
       }
     }
    catch(e){
-    alert(e)
+    alert("Notification is not supported")
    }
   };
-  useEffect(() => {
-    registerServiceWorker()
-  }, []);
+
   return (
     <div className="absolute w-full h-full bg-black">
       <h1 className="text-3xl text-white text-center mt-32 font-medium">
