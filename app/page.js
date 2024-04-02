@@ -2,15 +2,24 @@
 import Image from "next/image";
 import ring from "@/public/assets/images/ring-illustration.png";
 import bell from "@/public/assets/images/notification-bell.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export default function Home() {
   const [animate, setAnimate] = useState(true);
   const sendNotification = async () => {
     const permission = await Notification.requestPermission();
+    if (!"Notification" in window) {
+      alert("This browser does not support notification");
+      return;
+    }
     if (permission === "granted") {
+      navigator.serviceWorker.startMessages();
+
       new Notification("This is my project, did you like it?");
     }
   };
+  // useEffect(() => {
+  //   navigator.serviceWorker.register("sw.js");
+  // }, []);
   return (
     <div className="absolute w-full h-full bg-black">
       <h1 className="text-3xl text-white text-center mt-32 font-medium">
