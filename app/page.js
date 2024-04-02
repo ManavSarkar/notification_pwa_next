@@ -15,7 +15,7 @@ export default function Home() {
       if (permission === "granted") {
         navigator.serviceWorker.startMessages();
         let registration = await navigator.serviceWorker.getRegistration();
-        if(registration ===  null){
+        if(registration ===  undefined){
           new Notification("This is my project, did you like it?");
 
         }
